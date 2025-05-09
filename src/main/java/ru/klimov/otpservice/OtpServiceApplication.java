@@ -14,4 +14,9 @@ public class OtpServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(OtpServiceApplication.class, args);
     }
+
+    // todo:
+    // SecurityConfig
+    // CustomAuthenticationEntryPoint
+    // CustomAccessDeniedHandler
 }

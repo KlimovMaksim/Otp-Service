@@ -1,14 +1,17 @@
 spring:
   application:
     name: otp-service
-
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:25432/otp_service
     username: klimov
     password: java
-
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+app:
+  jwt:
+    secret: mephi
+    token-expiration-milliseconds: 3600000
