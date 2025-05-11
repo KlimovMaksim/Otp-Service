@@ -18,6 +18,7 @@ import ru.klimov.otpservice.secutity.JwtUtil;
 import ru.klimov.otpservice.service.AuthService;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,6 +46,13 @@ public class AuthServiceImpl implements AuthService {
         if (!(role.equals(Role.ADMIN.toString()) || role.equals(Role.USER.toString()))) {
             throw new RegistrationException("Only one of two roles is available for installation: "
                     + Role.ADMIN + " or " + Role.USER + ".");
+        }
+
+        if (role.equals(Role.ADMIN.toString())) {
+            List<User> admin = userRepository.findAllByRole(Role.ADMIN);
+            if (!admin.isEmpty()) {
+                throw new RegistrationException("Only one administrator can be installed.");
+            }
         }
 
         User newUser = userMapper.userRequestDtoToUser(userRequestDto);
