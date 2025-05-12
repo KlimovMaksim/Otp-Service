@@ -1,6 +1,7 @@
 package ru.klimov.otpservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.klimov.otpservice.dto.response.OtpCodeResponse;
@@ -16,6 +17,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OtpCodeServiceImpl implements OtpCodeService {
@@ -28,8 +30,10 @@ public class OtpCodeServiceImpl implements OtpCodeService {
 
     @Override
     public OtpCodeResponse generateOtpCode() {
+        log.info("Starting OTP code generation");
         int length = otpConfigurationService.getConfiguration().getOtpLength();
         int expirationMinutes = otpConfigurationService.getConfiguration().getOtpExpirationMinutes();
+        log.debug("Using configuration: length={}, expirationMinutes={}", length, expirationMinutes);
 
         String code = processCode(length);
 
@@ -41,20 +45,28 @@ public class OtpCodeServiceImpl implements OtpCodeService {
         otpCode.setUser(user);
 
         otpCodeRepository.save(otpCode);
+        log.info("Successfully generated and saved OTP code for user: {}", user.getId());
 
         return otpCodeMapper.toOtpCodeResponse(otpCode);
     }
 
     @Override
     public Boolean verifyCode(String code) {
+        log.info("Starting code verification process");
         User user = getAuthUser();
+        log.debug("Verifying code for user: {}", user.getId());
         OtpCode otpCode = otpCodeRepository.findFirstByUserAndCode(user, code)
-                .orElseThrow(() -> new NoSuchElementException("The code was not found for this user."));
+                .orElseThrow(() -> {
+                    log.error("Code not found for user: {}", user.getId());
+                    return new NoSuchElementException("The code was not found for this user.");
+                });
         if (otpCode.getStatus().equals(CodeStatus.ACTIVE)) {
             otpCode.setStatus(CodeStatus.USED);
             otpCodeRepository.save(otpCode);
+            log.info("Code successfully verified and marked as used for user: {}", user.getId());
             return true;
         } else {
+            log.warn("Attempt to verify non-active code for user: {}", user.getId());
             return false;
         }
     }
