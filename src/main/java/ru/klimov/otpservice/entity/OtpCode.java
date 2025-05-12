@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ru.klimov.otpservice.entity.enums.CodeStatus;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +21,7 @@ public class OtpCode {
     private String code;
 
     @Column(name = "expire_date", nullable = false)
-    private LocalDate expiryDate;
+    private LocalDateTime expiryDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")

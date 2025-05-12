@@ -8,11 +8,13 @@ import ru.klimov.otpservice.dto.response.ResponseDto;
 import ru.klimov.otpservice.exception.RegistrationException;
 import ru.klimov.otpservice.exception.UserNotFoundException;
 
+import java.util.NoSuchElementException;
+
 
 @ControllerAdvice
 public class ExceptionHandlerControllerAdvice {
 
-    @ExceptionHandler({UserNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, NoSuchElementException.class})
     public ResponseEntity<ResponseDto> handleExceptionForNotFoundHttpStatus(Exception ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponseDto(ex.getMessage()));
     }
