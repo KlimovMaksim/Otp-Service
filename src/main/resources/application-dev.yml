@@ -10,6 +10,18 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+  mail:
+    host: smtp.ethereal.email
+    port: 587
+    username: monique.reynolds@ethereal.email
+    password: rgxJuRerQ74yBM6uRD
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+        debug: false
 
 app:
   jwt:
