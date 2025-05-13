@@ -11,6 +11,7 @@ import ru.klimov.otpservice.entity.enums.CodeStatus;
 import ru.klimov.otpservice.mapper.OtpCodeMapper;
 import ru.klimov.otpservice.repository.OtpCodeRepository;
 import ru.klimov.otpservice.secutity.AuthUser;
+import ru.klimov.otpservice.service.FileService;
 import ru.klimov.otpservice.service.OtpCodeService;
 
 import java.security.SecureRandom;
@@ -26,6 +27,8 @@ public class OtpCodeServiceImpl implements OtpCodeService {
     private final OtpCodeRepository otpCodeRepository;
     private final OtpCodeMapper otpCodeMapper;
     private final SecureRandom secureRandom = new SecureRandom();
+    private final FileService fileService;
+
     private final char[] CHAR_ARRAY = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
     @Override
@@ -45,6 +48,7 @@ public class OtpCodeServiceImpl implements OtpCodeService {
         otpCode.setUser(user);
 
         otpCodeRepository.save(otpCode);
+        fileService.writeToFile(String.format("User: %s, OTP code: %s", user.getLogin(), code));
         log.info("Successfully generated and saved OTP code for user: {}", user.getId());
 
         return otpCodeMapper.toOtpCodeResponse(otpCode);
